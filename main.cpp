@@ -183,6 +183,58 @@ public:
         cout << endl;
     }
 
+    // Prim's minimum spanning tree, picks the smallest set of routes that
+    // still keeps every airport connected. starts at one airport and keeps
+    // adding the cheapest flight that reaches an airport not in the tree yet
+    void minSpanningTree() {
+        vector<int> cost(SIZE, NO_ROUTE);
+        vector<int> parent(SIZE, -1);
+        vector<bool> inTree(SIZE, false);
+
+        // start the tree at airport 0
+        cost[0] = 0;
+
+        for (int count = 0; count < SIZE; count++) {
+
+            // cheapest flight reaching an airport not yet in the tree
+            int node = -1;
+
+            for (int i = 0; i < SIZE; i++)
+                if (!inTree[i] && cost[i] != NO_ROUTE)
+                    if (node == -1 || cost[i] < cost[node])
+                        node = i;
+
+            if (node == -1)
+                break;
+
+            inTree[node] = true;
+
+            // update the cheapest way to reach each neighbor
+            for (Pair v : adjList[node])
+                if (!inTree[v.first] && v.second < cost[v.first]) {
+                    cost[v.first] = v.second;
+                    parent[v.first] = node;
+                }
+        }
+
+        cout << "Minimum Route Network (MST):" << endl;
+        cout << "Purpose: Fewest total flight minutes that still connects every airport" << endl;
+        cout << "=======================================" << endl;
+
+        int total = 0;
+
+        for (int i = 0; i < SIZE; i++)
+            if (parent[i] != -1) {
+                cout << "Route from " << AIRPORTS[parent[i]] << " to "
+                     << AIRPORTS[i] << " - Flight time: " << cost[i]
+                     << " min" << endl;
+
+                total = total + cost[i];
+            }
+
+        cout << "Total flight time in the network: " << total << " min" << endl;
+        cout << endl;
+    }
 
 };
 
@@ -215,6 +267,7 @@ int main() {
     graph.BFS(0);
 
     graph.shortestPath(0);
+    graph.minSpanningTree();
 
     return 0;
 }
