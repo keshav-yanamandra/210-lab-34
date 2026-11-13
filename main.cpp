@@ -77,6 +77,30 @@ public:
         cout << endl;
     }
 
+    // Breadth-first search, uses a queue so it goes level by level
+    void BFS(int start) {
+        vector<bool> visited(SIZE, false);
+        queue<int> q;
+
+        visited[start] = true;
+        q.push(start);
+        cout << "BFS starting from vertex " << start << ":" << endl;
+
+        while (!q.empty()) {
+            int node = q.front();
+            q.pop();
+
+            cout << node << " ";
+
+            // mark each neighbor visited as it is enqueued
+            for (Pair v : adjList[node])
+                if (!visited[v.first]) {
+                    visited[v.first] = true;
+                    q.push(v.first);
+                }
+        }
+        cout << endl;
+    }
 
 };
 
@@ -94,6 +118,7 @@ int main() {
     graph.printGraph();
 
     graph.DFS(0);
+    graph.BFS(0);
 
     return 0;
 }
