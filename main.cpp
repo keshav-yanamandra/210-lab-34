@@ -14,6 +14,7 @@
 using namespace std;
 
 const int SIZE = 11;
+const int NO_ROUTE = 1000000;
 
 struct Edge {
     int src, dest, weight;
@@ -135,6 +136,54 @@ public:
         cout << endl;
     }
 
+    // Dijkstra's shortest path, finds the quickest total flight time from one
+    // airport to every other one. picks the closest unvisited airport each
+    // round and checks if going through it beats the best time found so far
+    void shortestPath(int start) {
+        vector<int> dist(SIZE, NO_ROUTE);
+        vector<bool> done(SIZE, false);
+
+        dist[start] = 0;
+
+        for (int count = 0; count < SIZE; count++) {
+
+            // find the unfinished airport with the smallest time so far
+            int node = -1;
+
+            for (int i = 0; i < SIZE; i++)
+                if (!done[i] && dist[i] != NO_ROUTE)
+                    if (node == -1 || dist[i] < dist[node])
+                        node = i;
+
+            // nothing left that can be reached
+            if (node == -1)
+                break;
+
+            done[node] = true;
+
+            // see if flying through this airport is faster for its neighbors
+            for (Pair v : adjList[node])
+                if (dist[node] + v.second < dist[v.first])
+                    dist[v.first] = dist[node] + v.second;
+        }
+
+        cout << "Fastest Flight Times from " << AIRPORTS[start]
+             << " (" << ROLES[start] << "):" << endl;
+        cout << "Purpose: Least total flight time to every other airport" << endl;
+        cout << "=======================================" << endl;
+
+        for (int i = 0; i < SIZE; i++) {
+            cout << AIRPORTS[start] << " -> " << AIRPORTS[i] << " : ";
+
+            if (dist[i] == NO_ROUTE)
+                cout << "no route" << endl;
+            else
+                cout << dist[i] << " min" << endl;
+        }
+        cout << endl;
+    }
+
+
 };
 
 int main() {
@@ -164,6 +213,8 @@ int main() {
 
     graph.DFS(0);
     graph.BFS(0);
+
+    graph.shortestPath(0);
 
     return 0;
 }
