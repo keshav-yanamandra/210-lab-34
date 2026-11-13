@@ -1,5 +1,11 @@
+// Keshav Yanamandra
+// COMSC-210-5293, Fall 2026
+// Lab 34
+
 #include <iostream>
 #include <vector>
+#include <stack>
+#include <queue>
 using namespace std;
 
 const int SIZE = 7;
@@ -43,6 +49,35 @@ public:
             cout << endl;
         }
     }
+
+    // Depth-first search, uses a stack so it goes deep before wide
+    void DFS(int start) {
+        vector<bool> visited(SIZE, false);
+        stack<int> s;
+
+        s.push(start);
+        cout << "DFS starting from vertex " << start << ":" << endl;
+
+        while (!s.empty()) {
+            int node = s.top();
+            s.pop();
+
+            // a node can be pushed more than once, only visit it the first time
+            if (visited[node])
+                continue;
+
+            visited[node] = true;
+            cout << node << " ";
+
+            // push unvisited neighbors, LIFO makes the backtracking happen
+            for (Pair v : adjList[node])
+                if (!visited[v.first])
+                    s.push(v.first);
+        }
+        cout << endl;
+    }
+
+
 };
 
 int main() {
@@ -57,6 +92,8 @@ int main() {
 
     // Prints adjacency list representation of graph
     graph.printGraph();
+
+    graph.DFS(0);
 
     return 0;
 }
