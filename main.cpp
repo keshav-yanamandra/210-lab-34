@@ -1,6 +1,10 @@
 // Keshav Yanamandra
 // COMSC-210-5293, Fall 2026
 // Lab 34
+// the graph is a flight network out of SFO
+// nodes are airports, weights are nonstop flight time in minutes
+// the airports are the ones that came up most in my lab 30 flight data
+
 
 #include <iostream>
 #include <vector>
@@ -8,7 +12,7 @@
 #include <queue>
 using namespace std;
 
-const int SIZE = 7;
+const int SIZE = 11;
 
 struct Edge {
     int src, dest, weight;
@@ -101,14 +105,25 @@ public:
         }
         cout << endl;
     }
-
 };
 
 int main() {
     // Creates a vector of graph edges/weights
+    // vector<Edge> edges = {
+    //     // (x, y, w) —> edge from x to y having weight w
+    //     {0,1,12},{0,2,8},{0,3,21},{2,3,6},{2,6,2},{5,6,6},{4,5,9},{2,4,4},{2,5,5}
+    // };
+
+    // deleted nodes 5 and 6 from the lesson graph, added 6 new nodes (5 through 10),
+    // and changed weights 7 - 2 + 6 = 11 nodes
+    // 0 SFO  1 LAX  2 SEA  3 DEN  4 PHX  5 LAS
+    // 6 SLC  7 DFW  8 ORD  9 JFK  10 BOS
+    // (x, y, w) -> edge from x to y, w is nonstop flight time in minutes
     vector<Edge> edges = {
-        // (x, y, w) —> edge from x to y having weight w
-        {0,1,12},{0,2,8},{0,3,21},{2,3,6},{2,6,2},{5,6,6},{4,5,9},{2,4,4},{2,5,5}
+        {0,1,75},{0,2,115},{0,3,140},{0,5,85},{1,4,70},{1,5,60},
+        {2,3,155},{2,6,110},{3,4,105},{3,6,75},{3,8,145},{4,7,120},
+        {5,6,80},{6,8,175},{7,8,135},{7,9,215},{8,9,130},{8,10,165},
+        {9,10,70}
     };
 
     // Creates graph
