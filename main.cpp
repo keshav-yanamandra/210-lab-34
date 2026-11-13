@@ -10,6 +10,7 @@
 #include <vector>
 #include <stack>
 #include <queue>
+#include <string>
 using namespace std;
 
 const int SIZE = 11;
@@ -19,6 +20,11 @@ struct Edge {
 };
 
 typedef pair<int, int> Pair;  // Creates alias 'Pair' for the pair<int,int> data type
+
+const string AIRPORTS[SIZE] = {"SFO", "LAX", "SEA", "DEN", "PHX", "LAS",
+                               "SLC", "DFW", "ORD", "JFK", "BOS"};
+const string ROLES[SIZE] = {"Hub", "Hub", "Spoke", "Hub", "Spoke", "Spoke",
+                            "Spoke", "Hub", "Hub", "Hub", "Spoke"};
 
 class Graph {
 public:
@@ -43,68 +49,92 @@ public:
         }
     }
 
-    // Print the graph's adjacency list
+
+    // Print the whole route network, one airport at a time
     void printGraph() {
-        cout << "Graph's adjacency list:" << endl;
+        cout << "Flight Network Topology:" << endl;
+        cout << "========================" << endl;
+
         for (int i = 0; i < (int)adjList.size(); i++) {
-            cout << i << " --> ";
+            cout << AIRPORTS[i] << " (" << ROLES[i] << ") connects to:" << endl;
+
             for (Pair v : adjList[i])
-                cout << "(" << v.first << ", " << v.second << ") ";
-            cout << endl;
+                cout << "  -> " << AIRPORTS[v.first]
+                     << " (Flight time: " << v.second << " min)" << endl;
         }
+        cout << endl;
     }
 
     // Depth-first search, uses a stack so it goes deep before wide
+    // this follows one routing path as far as it goes before backing up
     void DFS(int start) {
         vector<bool> visited(SIZE, false);
         stack<int> s;
 
+        visited[start] = true;
         s.push(start);
-        cout << "DFS starting from vertex " << start << ":" << endl;
+
+        cout << "Route Trace (DFS) from " << AIRPORTS[start]
+             << " (" << ROLES[start] << "):" << endl;
+        cout << "Purpose: Following one routing path as deep as it goes" << endl;
+        cout << "=======================================" << endl;
 
         while (!s.empty()) {
             int node = s.top();
             s.pop();
 
-            // a node can be pushed more than once, only visit it the first time
-            if (visited[node])
-                continue;
-
-            visited[node] = true;
-            cout << node << " ";
+            cout << "Inspecting " << AIRPORTS[node]
+                 << " (" << ROLES[node] << ")" << endl;
 
             // push unvisited neighbors, LIFO makes the backtracking happen
             for (Pair v : adjList[node])
-                if (!visited[v.first])
+                if (!visited[v.first]) {
+                    visited[v.first] = true;
                     s.push(v.first);
+
+                    cout << "  -> Can route on to " << AIRPORTS[v.first]
+                         << " (" << ROLES[v.first] << ") - Flight time: "
+                         << v.second << " min" << endl;
+                }
         }
         cout << endl;
     }
 
     // Breadth-first search, uses a queue so it goes level by level
+    // each level is one more connection away from the starting airport
     void BFS(int start) {
         vector<bool> visited(SIZE, false);
         queue<int> q;
 
         visited[start] = true;
         q.push(start);
-        cout << "BFS starting from vertex " << start << ":" << endl;
+
+        cout << "Connection Reach (BFS) from " << AIRPORTS[start]
+             << " (" << ROLES[start] << "):" << endl;
+        cout << "Purpose: Finding what is reachable in the fewest connections" << endl;
+        cout << "=================================================" << endl;
 
         while (!q.empty()) {
             int node = q.front();
             q.pop();
 
-            cout << node << " ";
+            cout << "Checking " << AIRPORTS[node]
+                 << " (" << ROLES[node] << ")" << endl;
 
             // mark each neighbor visited as it is enqueued
             for (Pair v : adjList[node])
                 if (!visited[v.first]) {
                     visited[v.first] = true;
                     q.push(v.first);
+
+                    cout << "  -> Next reachable: " << AIRPORTS[v.first]
+                         << " (" << ROLES[v.first] << ") - Flight time: "
+                         << v.second << " min" << endl;
                 }
         }
         cout << endl;
     }
+
 };
 
 int main() {
