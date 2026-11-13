@@ -27,6 +27,9 @@ const string AIRPORTS[SIZE] = {"SFO", "LAX", "SEA", "DEN", "PHX", "LAS",
 const string ROLES[SIZE] = {"Hub", "Hub", "Spoke", "Hub", "Spoke", "Spoke",
                             "Spoke", "Hub", "Hub", "Hub", "Spoke"};
 
+// prints the menu, validates the choice and returns it
+int main_menu();
+
 class Graph {
 public:
     // a vector of vectors of Pairs to represent an adjacency list
@@ -260,14 +263,62 @@ int main() {
     // Creates graph
     Graph graph(edges);
 
-    // Prints adjacency list representation of graph
-    graph.printGraph();
+    int sel = main_menu();
 
-    graph.DFS(0);
-    graph.BFS(0);
+    while (sel != 0) {
 
-    graph.shortestPath(0);
-    graph.minSpanningTree();
+        switch (sel) {
+            case 1:
+                graph.printGraph();
+                break;
+            case 2:
+                graph.BFS(0);
+                break;
+            case 3:
+                graph.DFS(0);
+                break;
+            case 4:
+                graph.shortestPath(0);
+                break;
+            case 5:
+                graph.minSpanningTree();
+                break;
+        }
+
+        sel = main_menu();
+    }
+
+    cout << "Goodbye." << endl;
 
     return 0;
+}
+
+int main_menu() {
+    cout << "Flight Network Menu:" << endl;
+    cout << "[1] Display flight network" << endl;
+    cout << "[2] Check reachable airports (BFS)" << endl;
+    cout << "[3] Trace a routing path (DFS)" << endl;
+    cout << "[4] Calculate fastest flight times" << endl;
+    cout << "[5] Find minimum route network (MST)" << endl;
+    cout << "[0] Exit" << endl;
+    cout << "Enter your choice: ";
+
+    int choice = 0;
+
+    cin >> choice;
+
+    // if the input is used up there is nothing left to read, so quit
+    if (!cin)
+        return 0;
+
+    // keep asking until the choice is on the menu
+    while (choice < 0 || choice > 5) {
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        if (!cin)
+            return 0;
+    }
+
+    return choice;
 }
